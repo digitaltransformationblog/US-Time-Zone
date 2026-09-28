@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>US States & India Live Clock</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #0f1117;
+    color: #eee;
+    margin: 0;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    color: #4fd1c5;
+    margin-bottom: 5px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #999;
+    margin-bottom: 25px;
+    font-size: 14px;
+  }
+  #search {
+    display: block;
+    margin: 0 auto 20px auto;
+    padding: 8px 12px;
+    width: 260px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background: #1a1d27;
+    color: #eee;
+    font-size: 14px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 14px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .card {
+    background: #1a1d27;
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 1px solid #2a2e3a;
+    transition: transform 0.15s;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    border-color: #4fd1c5;
+  }
+  .state-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .label {
+    color: #888;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .time {
+    font-family: 'Consolas', monospace;
+    font-size: 15px;
+    font-weight: bold;
+  }
+  .us-time { color: #63b3ed; }
+  .india-time {
+    color: #f6ad55;
+    animation: blink 1.4s infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.25; }
+  }
+  .divider {
+    border-top: 1px solid #2a2e3a;
+    margin: 6px 0 8px 0;
+  }
+</style>
+</head>
+<body>
+
+<h1>🌐 US States — Live Clock with India Time</h1>
+<div class="subtitle">Each card shows the current local time for the state (blue) and the parallel current time in India (orange, blinking).</div>
+
+<input id="search" type="text" placeholder="Search state...">
+
+<div class="grid" id="grid"></div>
+
+<script>
+const statesTZ = {
+  "Alabama": "America/Chicago",
+  "Alaska": "America/Anchorage",
+  "Arizona": "America/Phoenix",
+  "Arkansas": "America/Chicago",
+  "California": "America/Los_Angeles",
+  "Colorado": "America/Denver",
+  "Connecticut": "America/New_York",
+  "Delaware": "America/New_York",
+  "Florida": "America/New_York",
+  "Georgia": "America/New_York",
+  "Hawaii": "Pacific/Honolulu",
+  "Idaho": "America/Boise",
+  "Illinois": "America/Chicago",
+  "Indiana": "America/Indiana/Indianapolis",
+  "Iowa": "America/Chicago",
+  "Kansas": "America/Chicago",
+  "Kentucky": "America/New_York",
+  "Louisiana": "America/Chicago",
+  "Maine": "America/New_York",
+  "Maryland": "America/New_York",
+  "Massachusetts": "America/New_York",
+  "Michigan": "America/Detroit",
+  "Minnesota": "America/Chicago",
+  "Mississippi": "America/Chicago",
+  "Missouri": "America/Chicago",
+  "Montana": "America/Denver",
+  "Nebraska": "America/Chicago",
+  "Nevada": "America/Los_Angeles",
+  "New Hampshire": "America/New_York",
+  "New Jersey": "America/New_York",
+  "New Mexico": "America/Denver",
+  "New York": "America/New_York",
+  "North Carolina": "America/New_York",
+  "North Dakota": "America/Chicago",
+  "Ohio": "America/New_York",
+  "Oklahoma": "America/Chicago",
+  "Oregon": "America/Los_Angeles",
+  "Pennsylvania": "America/New_York",
+  "Rhode Island": "America/New_York",
+  "South Carolina": "America/New_York",
+  "South Dakota": "America/Chicago",
+  "Tennessee": "America/Chicago",
+  "Texas": "America/Chicago",
+  "Utah": "America/Denver",
+  "Vermont": "America/New_York",
+  "Virginia": "America/New_York",
+  "Washington": "America/Los_Angeles",
+  "West Virginia": "America/New_York",
+  "Wisconsin": "America/Chicago",
+  "Wyoming": "America/Denver"
+};
+const indiaTZ = "Asia/Kolkata";
+
+const grid = document.getElementById('grid');
+const cardMap = {};
+
+function formatTime(tz) {
+  return new Date().toLocaleString('en-US', {
+    timeZone: tz,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  });
+}
+
+function formatDate(tz) {
+  return new Date().toLocaleDateString('en-US', {
+    timeZone: tz,
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric'
+  });
+}
+
+for (const [state, tz] of Object.entries(statesTZ)) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.state = state.toLowerCase();
+  card.innerHTML = `
+    <div class="state-name">${state}</div>
+    <div class="label">Local Time (${tz.split('/').pop().replace('_',' ')})</div>
+    <div class="row"><span class="time us-time" id="us-${state}"></span></div>
+    <div class="row"><span style="color:#666;font-size:11px;" id="usdate-${state}"></span></div>
+    <div class="divider"></div>
+    <div class="label">India (IST) — parallel</div>
+    <div class="row"><span class="time india-time" id="in-${state}"></span></div>
+  `;
+  grid.appendChild(card);
+  cardMap[state] = tz;
+}
+
+function updateClocks() {
+  for (const [state, tz] of Object.entries(cardMap)) {
+    document.getElementById(`us-${state}`).textContent = formatTime(tz);
+    document.getElementById(`usdate-${state}`).textContent = formatDate(tz);
+    document.getElementById(`in-${state}`).textContent = formatTime(indiaTZ);
+  }
+}
+
+updateClocks();
+setInterval(updateClocks, 1000);
+
+document.getElementById('search').addEventListener('input', (e) => {
+  const q = e.target.value.toLowerCase();
+  document.querySelectorAll('.card').forEach(c => {
+    c.style.display = c.dataset.state.includes(q) ? '' : 'none';
+  });
+});
+</script>
+
+</body>
+</html>
