@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07131f" />
+    <title>Time Atlas — United States × India</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+    <style>
+:root {
+  --ink: #eaf1f6;
+  --muted: #a7b7c6;
+  --paper: #07131f;
+  --paper-soft: #0c1d2b;
+  --line: rgba(225, 239, 248, 0.15);
+  --saffron: #ffb156;
+  --coral: #fb775d;
+  --mono: "DM Mono", monospace;
+  --sans: "Manrope", sans-serif;
+  --serif: "Playfair Display", Georgia, serif;
+}
+
+* { box-sizing: border-box; }
+html { background: var(--paper); }
+body { margin: 0; min-width: 320px; color: var(--ink); background: radial-gradient(circle at 70% -10%, #183952 0, transparent 32rem), var(--paper); font-family: var(--sans); }
+button, input { font: inherit; }
+button { cursor: pointer; }
+.site-shell { width: min(1560px, calc(100% - 48px)); margin: 0 auto; padding: 44px 0 24px; }
+
+.hero { display: grid; grid-template-columns: 1.15fr minmax(320px, .85fr); align-items: end; gap: 40px; padding: 28px 0 48px; border-bottom: 1px solid var(--line); }
+.eyebrow { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; color: #c8d8e4; font: 500 10px/1.2 var(--mono); letter-spacing: .15em; text-transform: uppercase; }
+.eyebrow span { width: 24px; height: 1px; background: var(--saffron); }
+h1, h2, p { margin-top: 0; }
+h1 { max-width: 720px; margin-bottom: 18px; font-size: clamp(40px, 5.3vw, 84px); line-height: .99; letter-spacing: -.055em; font-weight: 700; }
+h1 em { color: #a9cce0; font-family: var(--serif); font-weight: 600; letter-spacing: -.04em; }
+.hero-description { max-width: 630px; margin-bottom: 0; color: var(--muted); font-size: 15px; line-height: 1.7; }
+
+.india-clock { position: relative; isolation: isolate; overflow: hidden; min-height: 205px; padding: 27px 30px 21px; border: 1px solid rgba(255, 205, 128, .38); background: linear-gradient(135deg, rgba(255, 179, 86, .17), rgba(240, 104, 77, .07) 53%, rgba(6, 22, 34, .55)); box-shadow: 0 20px 70px rgba(0,0,0,.2); }
+.india-clock::before, .india-clock::after { content: ""; position: absolute; z-index: -1; border-radius: 50%; opacity: .85; }
+.india-clock::before { width: 285px; height: 285px; right: -96px; top: -160px; border: 1px solid rgba(255, 212, 137, .28); box-shadow: 0 0 0 28px rgba(255, 190, 100, .04), 0 0 0 72px rgba(255, 190, 100, .03); }
+.india-clock::after { width: 115px; height: 115px; right: 50px; bottom: -82px; background: var(--coral); filter: blur(34px); opacity: .25; }
+.clock-meta, .india-foot { display: flex; align-items: center; gap: 9px; color: #ffd6a2; font: 500 10px/1 var(--mono); text-transform: uppercase; letter-spacing: .11em; }
+.utc-offset { margin-left: auto; color: #e1b987; }
+.pulse-dot, .tiny-pulse { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--saffron); box-shadow: 0 0 0 0 rgba(255, 177, 86, .6); animation: ping 1.7s ease-out infinite; }
+.india-time { display: block; margin: 23px 0 6px; color: #fff4e5; font: 500 clamp(38px, 4.6vw, 64px)/.92 var(--mono); letter-spacing: -.08em; }
+.india-date { margin: 0; color: #ffd6a2; font: 500 11px/1.4 var(--mono); letter-spacing: .04em; text-transform: uppercase; }
+.india-foot { justify-content: space-between; margin-top: 28px; color: #e3c199; }
+
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 24px; padding: 25px 0; border-bottom: 1px solid var(--line); }
+.state-summary { color: var(--muted); font-size: 12px; white-space: nowrap; }
+.state-summary strong { color: var(--ink); font: 500 21px/1 var(--mono); }
+.summary-rule { display: inline-block; width: 22px; height: 1px; margin: 0 9px; vertical-align: middle; background: var(--line); }
+.search-wrap { display: flex; align-items: center; gap: 9px; min-width: 180px; margin-left: auto; color: var(--muted); border-bottom: 1px solid var(--line); }
+.search-wrap input { width: 100%; padding: 7px 0; color: var(--ink); outline: none; border: 0; background: transparent; font-size: 12px; }
+.search-wrap input::placeholder { color: #6f8393; }
+.zone-filters { display: flex; flex-wrap: wrap; gap: 5px; }
+.filter { padding: 6px 9px; color: #a7b7c6; border: 1px solid transparent; background: transparent; font: 500 10px var(--mono); letter-spacing: .04em; text-transform: uppercase; transition: .2s ease; }
+.filter:hover, .filter:focus-visible { color: var(--ink); border-color: var(--line); outline: none; }
+.filter.active { color: #101e27; background: #d9e7ef; }
+
+.atlas-section { padding: 54px 0 38px; }
+.section-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 25px; }
+h2 { margin: 0; font: 600 clamp(29px, 3vw, 43px)/1 var(--serif); letter-spacing: -.04em; }
+.legend { display: flex; align-items: center; gap: 7px; margin: 0 0 3px; color: var(--muted); font: 500 10px/1.3 var(--mono); text-transform: uppercase; letter-spacing: .06em; }
+.live-ring, .india-ring { width: 8px; height: 8px; border-radius: 50%; border: 1px solid #b4e6f0; background: rgba(180,230,240,.2); }
+.india-ring { border-color: var(--saffron); background: rgba(255,177,86,.2); }
+.legend-divider { width: 14px; height: 1px; margin: 0 5px; background: var(--line); }
+
+.state-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.state-card { --sky-1: #1c4e66; --sky-2: #0a2535; --earth: #9ab667; --water: #a3dfe5; --sun: #f8c26d; position: relative; isolation: isolate; display: block; min-height: 218px; overflow: hidden; border: 1px solid rgba(226, 240, 248, .14); background: #0d2330; outline: none; transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease; }
+.state-card[hidden] { display: none; }
+.state-card:hover, .state-card:focus-visible, .state-card.is-selected { z-index: 2; transform: translateY(-4px); border-color: rgba(255, 215, 154, .65); box-shadow: 0 18px 35px rgba(0,0,0,.28); }
+.state-card.is-selected { box-shadow: 0 0 0 1px rgba(255, 177, 86, .22), 0 18px 35px rgba(0,0,0,.28); }
+.landscape, .card-wash { position: absolute; inset: 0; pointer-events: none; }
+.landscape { overflow: hidden; background: linear-gradient(156deg, var(--sky-1), var(--sky-2) 66%, var(--earth)); }
+.landscape::before { content: ""; position: absolute; width: 85px; height: 85px; left: 62%; top: 12%; border-radius: 50%; background: var(--sun); opacity: .78; box-shadow: 0 0 44px var(--sun); }
+.landscape::after { content: ""; position: absolute; right: -18%; bottom: -12px; width: 85%; height: 74%; background: var(--earth); clip-path: polygon(0 71%, 15% 44%, 27% 55%, 45% 12%, 64% 55%, 77% 40%, 100% 80%, 100% 100%, 0 100%); opacity: .72; }
+.horizon { position: absolute; left: -8%; bottom: 0; width: 116%; height: 41%; background: var(--water); opacity: .45; transform: skewY(-3deg); }
+.landmark-mark { position: absolute; z-index: 1; right: 9%; bottom: 7%; color: rgba(255,255,255,.35); font: 500 50px/.7 var(--serif); }
+.card-wash { z-index: 1; background: linear-gradient(180deg, rgba(2,14,23,.06), rgba(2,13,21,.2) 38%, rgba(3,14,22,.93) 100%); }
+.card-content { position: relative; z-index: 2; display: flex; flex-direction: column; min-height: 218px; padding: 14px; }
+.state-header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.state-id { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.state-abbr { color: #eef5f8; font: 500 10px var(--mono); letter-spacing: .12em; }
+.state-name { overflow: hidden; color: #f8fbfc; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 700; }
+.terrain-label { max-width: 48%; overflow: hidden; color: rgba(241,249,252,.7); text-align: right; text-overflow: ellipsis; white-space: nowrap; font: 500 8px var(--mono); letter-spacing: .09em; text-transform: uppercase; }
+.landmark-label { max-width: 83%; margin: 8px 0 auto; color: rgba(239,247,249,.8); font: 500 10px/1.35 var(--mono); }
+.time-pair { display: grid; grid-template-columns: minmax(0, 1fr) 16px minmax(0, 1fr); align-items: end; gap: 4px; }
+.time-label { display: flex; align-items: center; gap: 4px; margin: 0 0 5px; color: #bad0dc; font: 500 8px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.state-time, .paired-india-time { display: block; overflow: hidden; color: #f4f9fb; text-overflow: clip; white-space: nowrap; font: 500 clamp(15px, 1.3vw, 20px)/1 var(--mono); letter-spacing: -.08em; }
+.paired-india-time { color: #ffe1ad; }
+.zone-label, .paired-india-zone { min-height: 21px; margin: 5px 0 0; color: #9ab2c0; font: 400 8px/1.25 var(--mono); }
+.paired-india-zone { color: #d8ad73; }
+.parallel-mark { display: flex; flex-direction: column; align-items: center; gap: 3px; padding-bottom: 16px; color: var(--saffron); }
+.parallel-mark span { width: 4px; height: 4px; border: 1px solid currentColor; border-radius: 50%; }
+.parallel-mark i { display: block; width: 1px; height: 18px; background: currentColor; opacity: .7; }
+.tiny-pulse { width: 5px; height: 5px; animation-delay: .35s; }
+
+.state-card[data-scene="coast"] .landscape::after { clip-path: polygon(0 78%, 14% 67%, 30% 75%, 45% 63%, 67% 77%, 82% 63%, 100% 72%, 100% 100%, 0 100%); }
+.state-card[data-scene="coast"] .horizon { height: 51%; opacity: .75; background: repeating-linear-gradient(173deg, rgba(237,255,255,.6) 0 2px, transparent 2px 11px), var(--water); }
+.state-card[data-scene="desert"] .landscape::after { clip-path: polygon(0 72%, 18% 59%, 35% 68%, 57% 43%, 78% 69%, 100% 58%, 100% 100%, 0 100%); }
+.state-card[data-scene="desert"] .horizon { background: linear-gradient(164deg, transparent 0 43%, rgba(255,218,151,.45) 44% 46%, transparent 47%), var(--earth); opacity: .62; }
+.state-card[data-scene="forest"] .landscape::after { clip-path: polygon(0 69%, 8% 43%, 16% 70%, 26% 29%, 36% 70%, 48% 35%, 59% 70%, 70% 22%, 82% 70%, 91% 41%, 100% 70%, 100% 100%, 0 100%); }
+.state-card[data-scene="plains"] .landscape::after { clip-path: polygon(0 66%, 17% 62%, 37% 67%, 54% 55%, 76% 63%, 100% 58%, 100% 100%, 0 100%); }
+.state-card[data-scene="plains"] .horizon { height: 32%; opacity: .45; background: repeating-linear-gradient(102deg, transparent 0 20px, rgba(255,255,255,.18) 20px 22px), var(--earth); }
+.state-card[data-scene="lakes"] .landscape::after { clip-path: polygon(0 74%, 16% 53%, 31% 65%, 48% 45%, 64% 65%, 82% 50%, 100% 72%, 100% 100%, 0 100%); }
+.state-card[data-scene="wetlands"] .landscape::after { clip-path: polygon(0 67%, 7% 51%, 12% 69%, 22% 39%, 30% 68%, 39% 47%, 46% 70%, 62% 41%, 69% 71%, 79% 42%, 87% 70%, 96% 51%, 100% 70%, 100% 100%, 0 100%); }
+.state-card[data-scene="island"] .landscape::after { border-radius: 55% 45% 0 0; clip-path: polygon(0 74%, 16% 57%, 32% 61%, 48% 43%, 69% 54%, 86% 51%, 100% 71%, 100% 100%, 0 100%); }
+.state-card[data-scene="urban"] .landscape::after { clip-path: polygon(0 73%, 10% 73%, 10% 40%, 20% 40%, 20% 59%, 29% 59%, 29% 18%, 42% 18%, 42% 65%, 55% 65%, 55% 34%, 67% 34%, 67% 57%, 80% 57%, 80% 24%, 94% 24%, 94% 73%, 100% 73%, 100% 100%, 0 100%); }
+.state-card[data-scene="river"] .horizon { height: 53%; opacity: .6; background: linear-gradient(115deg, transparent 0 40%, rgba(226,251,250,.75) 41% 52%, transparent 53% 100%), var(--earth); }
+
+.empty-state { padding: 50px 0; color: var(--muted); text-align: center; }
+footer { display: flex; justify-content: space-between; gap: 20px; padding-top: 22px; color: #89a0b0; border-top: 1px solid var(--line); font: 400 9px/1.5 var(--mono); letter-spacing: .04em; text-transform: uppercase; }
+footer span:first-child { color: #d7e6ee; font-weight: 500; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@keyframes ping { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,177,86,.5); opacity: 1; } 60% { box-shadow: 0 0 0 6px rgba(255,177,86,0); opacity: .75; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; } }
+@media (max-width: 1200px) { .state-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 860px) { .site-shell { width: min(100% - 32px, 760px); padding-top: 22px; } .hero { grid-template-columns: 1fr; gap: 28px; padding-bottom: 35px; } .search-wrap { margin-left: 0; } .section-heading { align-items: start; flex-direction: column; } .state-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .state-card { min-height: 205px; } }
+@media (max-width: 570px) { .site-shell { width: min(100% - 24px, 520px); } h1 { font-size: 43px; } .india-clock { min-height: 180px; padding: 22px; } .toolbar { gap: 14px; } .state-summary { width: 100%; } .search-wrap { width: 100%; } .state-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } .state-card, .card-content { min-height: 192px; } .landmark-label { font-size: 9px; } .state-time, .paired-india-time { font-size: 16px; } footer { flex-direction: column; gap: 5px; } .legend { flex-wrap: wrap; } }
+
+</style>
+  </head>
+  <body>
+    <main class="site-shell">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span></span> Live world clock</p>
+          <h1 id="page-title">The United States,<br /><em>in step with India.</em></h1>
+          <p class="hero-description">Every state’s local time paired with India Standard Time, refreshed every second and framed by the landscape that defines it.</p>
+        </div>
+
+        <section class="india-clock" aria-label="Current time in India">
+          <div class="india-glow"></div>
+          <div class="clock-meta"><span class="pulse-dot"></span> India Standard Time <span class="utc-offset">UTC +5:30</span></div>
+          <time id="india-time" class="india-time" datetime=""></time>
+          <p id="india-date" class="india-date"></p>
+          <div class="india-foot"><span>New Delhi</span><span>India</span></div>
+        </section>
+      </section>
+
+      <section class="toolbar" aria-label="State controls">
+        <div class="state-summary"><strong id="state-count">50</strong> states in view <span class="summary-rule"></span> Click a tile to spotlight it</div>
+        <label class="search-wrap" for="state-search">
+          <span aria-hidden="true">⌕</span>
+          <span class="sr-only">Search states</span>
+          <input id="state-search" type="search" placeholder="Find a state" autocomplete="off" />
+        </label>
+        <div class="zone-filters" role="group" aria-label="Filter by time zone">
+          <button class="filter active" data-filter="all" type="button">All</button>
+          <button class="filter" data-filter="eastern" type="button">Eastern</button>
+          <button class="filter" data-filter="central" type="button">Central</button>
+          <button class="filter" data-filter="mountain" type="button">Mountain</button>
+          <button class="filter" data-filter="pacific" type="button">Pacific+</button>
+        </div>
+      </section>
+
+      <section class="atlas-section" aria-labelledby="atlas-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow"><span></span> State time atlas</p>
+            <h2 id="atlas-title">A minute across America</h2>
+          </div>
+          <p class="legend"><span class="live-ring"></span> Live local time <span class="legend-divider"></span> <span class="india-ring"></span> India time, in parallel</p>
+        </div>
+        <div id="state-grid" class="state-grid" aria-live="polite"></div>
+        <p id="empty-state" class="empty-state" hidden>No states match that search.</p>
+      </section>
+
+      <footer>
+        <span>Time Atlas</span>
+        <span>Local time zones observe daylight saving changes automatically where applicable.</span>
+        <span id="last-update">Updated now</span>
+      </footer>
+    </main>
+
+    <template id="state-template">
+      <article class="state-card" tabindex="0">
+        <div class="landscape" aria-hidden="true">
+          <div class="horizon"></div>
+          <span class="landmark-mark"></span>
+        </div>
+        <div class="card-wash"></div>
+        <div class="card-content">
+          <header class="state-header">
+            <div class="state-id"><span class="state-abbr"></span><span class="state-name"></span></div>
+            <span class="terrain-label"></span>
+          </header>
+          <p class="landmark-label"></p>
+          <div class="time-pair">
+            <section class="local-time-block">
+              <p class="time-label">State time</p>
+              <time class="state-time"></time>
+              <p class="zone-label"></p>
+            </section>
+            <div class="parallel-mark" aria-hidden="true"><span></span><i></i><span></span></div>
+            <section class="india-time-block">
+              <p class="time-label"><span class="tiny-pulse"></span> India</p>
+              <time class="paired-india-time"></time>
+              <p class="paired-india-zone">IST · UTC +5:30</p>
+            </section>
+          </div>
+        </div>
+      </article>
+    </template>
+    <script>
+const states = [
+  ["AL", "Alabama", "America/Chicago", "central", "river", "Tennessee River & Appalachian foothills", "#1f6981", "#102f3a", "#6c9a67", "#9bdae1", "#f2c269", "≈"],
+  ["AK", "Alaska", "America/Anchorage", "pacific", "mountains", "Denali & glacial ranges", "#35587b", "#13253f", "#8299a2", "#b8e5ed", "#dbe8f0", "△"],
+  ["AZ", "Arizona", "America/Phoenix", "mountain", "desert", "Sonoran Desert & Grand Canyon", "#a24d39", "#39233a", "#c7854d", "#f4c881", "#ffe09a", "⌁"],
+  ["AR", "Arkansas", "America/Chicago", "central", "forest", "Ozark Highlands", "#316c67", "#102f34", "#4f875e", "#93d6cb", "#f0d07c", "⌂"],
+  ["CA", "California", "America/Los_Angeles", "pacific", "coast", "Pacific coast & Sierra Nevada", "#326a8d", "#102e49", "#a88b5b", "#77d5de", "#ffe09d", "≈"],
+  ["CO", "Colorado", "America/Denver", "mountain", "mountains", "Rocky Mountains & high plains", "#426995", "#172944", "#5f895e", "#bdd8eb", "#f5cc7a", "△"],
+  ["CT", "Connecticut", "America/New_York", "eastern", "coast", "Long Island Sound shoreline", "#3c6f7c", "#11323a", "#5f845e", "#a0dce1", "#f5d395", "≈"],
+  ["DE", "Delaware", "America/New_York", "eastern", "wetlands", "Delaware Bay & salt marshes", "#4b7669", "#12373a", "#698c5a", "#b5dfd1", "#f4ce77", "⌇"],
+  ["FL", "Florida", "America/New_York", "eastern", "wetlands", "Everglades & coral coast", "#247788", "#0a3642", "#6f9a59", "#7fe0da", "#ffe38f", "⌇"],
+  ["GA", "Georgia", "America/New_York", "eastern", "forest", "Blue Ridge to barrier islands", "#456a6b", "#162f36", "#658a55", "#9ccfc4", "#f1ce76", "⌂"],
+  ["HI", "Hawaii", "Pacific/Honolulu", "pacific", "island", "Volcanic islands & Pacific surf", "#226f8a", "#0b3044", "#4d8255", "#62d7de", "#ffd782", "◒"],
+  ["ID", "Idaho", "America/Boise", "mountain", "mountains", "Sawtooths & Snake River Plain", "#3f6e83", "#143240", "#74925f", "#b1deea", "#f5d17f", "△"],
+  ["IL", "Illinois", "America/Chicago", "central", "plains", "Prairies & Lake Michigan", "#53778f", "#183647", "#899b5b", "#afdce4", "#f3cf77", "⌁"],
+  ["IN", "Indiana", "America/Indiana/Indianapolis", "eastern", "plains", "Wabash lowlands & dunes", "#557171", "#1a3338", "#7e925c", "#b3d4cb", "#f0cb72", "⌁"],
+  ["IA", "Iowa", "America/Chicago", "central", "plains", "Loess Hills & corn prairies", "#68836d", "#273b3a", "#9a9d58", "#c7d89b", "#f4d17d", "⌁"],
+  ["KS", "Kansas", "America/Chicago", "central", "plains", "Tallgrass Prairie & Flint Hills", "#6e7e58", "#27372d", "#a5954e", "#d7cb84", "#f7da83", "⌁"],
+  ["KY", "Kentucky", "America/New_York", "eastern", "river", "Bluegrass country & Cumberland Plateau", "#4d7969", "#143a38", "#709757", "#9bd7c1", "#f0c978", "≈"],
+  ["LA", "Louisiana", "America/Chicago", "central", "wetlands", "Mississippi delta & bayous", "#316e70", "#10383b", "#5c8751", "#8ed4c1", "#f2ca76", "⌇"],
+  ["ME", "Maine", "America/New_York", "eastern", "coast", "Rocky Atlantic coast & pine woods", "#315f7a", "#123243", "#5c855d", "#89ced9", "#f2ca7c", "≈"],
+  ["MD", "Maryland", "America/New_York", "eastern", "wetlands", "Chesapeake Bay & tidal marshes", "#397880", "#10383e", "#688e55", "#9bd8cf", "#f3cf7b", "⌇"],
+  ["MA", "Massachusetts", "America/New_York", "eastern", "coast", "Cape Cod & granite shores", "#315f7f", "#132e45", "#718664", "#9bdbe0", "#f0ca78", "≈"],
+  ["MI", "Michigan", "America/Detroit", "eastern", "lakes", "Great Lakes & inland dunes", "#356f8a", "#113340", "#5d8f64", "#97dbe4", "#f2d27e", "≈"],
+  ["MN", "Minnesota", "America/Chicago", "central", "lakes", "Land of 10,000 Lakes", "#387087", "#143541", "#608961", "#a6dee2", "#f2ce7d", "≈"],
+  ["MS", "Mississippi", "America/Chicago", "central", "river", "Delta lowlands & Gulf coast", "#526f62", "#1a3635", "#668958", "#acd0b7", "#efc970", "≈"],
+  ["MO", "Missouri", "America/Chicago", "central", "river", "Ozarks & Missouri River", "#4d766a", "#173636", "#6b8e59", "#a8d4bf", "#f1c979", "≈"],
+  ["MT", "Montana", "America/Denver", "mountain", "mountains", "Big Sky peaks & prairie", "#4e668c", "#17253e", "#728667", "#bccee2", "#f5cd78", "△"],
+  ["NE", "Nebraska", "America/Chicago", "central", "plains", "Sandhills & Platte River", "#718061", "#2b382f", "#a49a58", "#d8cc87", "#f5d47c", "⌁"],
+  ["NV", "Nevada", "America/Los_Angeles", "pacific", "desert", "Great Basin & Mojave Desert", "#9b6043", "#39293a", "#bd7a4b", "#f2bd79", "#ffe39d", "⌁"],
+  ["NH", "New Hampshire", "America/New_York", "eastern", "mountains", "White Mountains & lakes", "#416f78", "#13333b", "#668c5e", "#a4d7d2", "#f0cd78", "△"],
+  ["NJ", "New Jersey", "America/New_York", "eastern", "coast", "Pine Barrens & Atlantic shore", "#397789", "#10323e", "#668c57", "#94dce0", "#f4d17a", "≈"],
+  ["NM", "New Mexico", "America/Denver", "mountain", "desert", "High desert & Sangre de Cristo", "#a6563c", "#3a2636", "#b77948", "#f0b879", "#ffe09b", "⌁"],
+  ["NY", "New York", "America/New_York", "eastern", "urban", "Hudson Valley & Adirondacks", "#355f7a", "#102d41", "#587b68", "#92d2db", "#f2ca78", "▥"],
+  ["NC", "North Carolina", "America/New_York", "eastern", "mountains", "Blue Ridge to Outer Banks", "#366b77", "#13343c", "#5f8b5e", "#a2d8d1", "#f2ce7c", "△"],
+  ["ND", "North Dakota", "America/Chicago", "central", "plains", "Badlands & northern prairie", "#77815a", "#2e352b", "#a49655", "#d3c784", "#f4d27d", "⌁"],
+  ["OH", "Ohio", "America/New_York", "eastern", "lakes", "Lake Erie shore & Appalachian edge", "#426d78", "#15333a", "#688c5b", "#a5d7d3", "#f0cc76", "≈"],
+  ["OK", "Oklahoma", "America/Chicago", "central", "plains", "Red plains & Wichita Mountains", "#8a704a", "#332e27", "#a18e4d", "#d5be76", "#f5d47e", "⌁"],
+  ["OR", "Oregon", "America/Los_Angeles", "pacific", "forest", "Cascades, forests & Pacific coast", "#326f72", "#103438", "#4f8657", "#91d0c2", "#f1d079", "⌂"],
+  ["PA", "Pennsylvania", "America/New_York", "eastern", "forest", "Allegheny Plateau & river valleys", "#466e64", "#173535", "#668b5c", "#acd1bc", "#f0c977", "⌂"],
+  ["RI", "Rhode Island", "America/New_York", "eastern", "coast", "Narragansett Bay & coves", "#317a88", "#10343d", "#678a60", "#8bd9df", "#f2ce78", "≈"],
+  ["SC", "South Carolina", "America/New_York", "eastern", "coast", "Lowcountry marshes & Atlantic beaches", "#327879", "#11373b", "#6c9154", "#8dd5c9", "#f3ce79", "≈"],
+  ["SD", "South Dakota", "America/Chicago", "central", "plains", "Black Hills & badlands", "#767353", "#2e3328", "#9d9050", "#d1c07d", "#f4d17a", "⌁"],
+  ["TN", "Tennessee", "America/Chicago", "central", "mountains", "Smokies & Tennessee River", "#426f69", "#153636", "#638f5b", "#a0d5c0", "#f2cb79", "△"],
+  ["TX", "Texas", "America/Chicago", "central", "desert", "Hill Country, plains & Gulf", "#986040", "#392a30", "#b17443", "#e9b576", "#ffe09a", "⌁"],
+  ["UT", "Utah", "America/Denver", "mountain", "desert", "Red rock country & salt flats", "#a5543b", "#3c2635", "#bd7947", "#f0b67b", "#ffe19b", "⌁"],
+  ["VT", "Vermont", "America/New_York", "eastern", "mountains", "Green Mountains & maple valleys", "#3f766d", "#113739", "#5c9057", "#9ed5c0", "#f1cf7b", "△"],
+  ["VA", "Virginia", "America/New_York", "eastern", "mountains", "Blue Ridge & Chesapeake Bay", "#396e78", "#12333b", "#668c5d", "#9bd8d0", "#f0cb77", "△"],
+  ["WA", "Washington", "America/Los_Angeles", "pacific", "forest", "Cascades, Puget Sound & rainforests", "#326d75", "#10333a", "#4b8659", "#90d2c5", "#f0ce77", "⌂"],
+  ["WV", "West Virginia", "America/New_York", "eastern", "mountains", "Appalachian ridges & hollows", "#3d6d61", "#143532", "#628b59", "#a1d0ba", "#f0ca74", "△"],
+  ["WI", "Wisconsin", "America/Chicago", "central", "lakes", "Northwoods & Great Lakes shore", "#3c7174", "#153438", "#668b61", "#9ad7d4", "#f0cb77", "≈"],
+  ["WY", "Wyoming", "America/Denver", "mountain", "mountains", "Tetons, Yellowstone & high plains", "#4e6d89", "#162b3e", "#728b63", "#b5d5df", "#f4d07a", "△"]
+].map(([abbr, name, zone, group, scene, landmark, sky1, sky2, earth, water, sun, mark]) => ({ abbr, name, zone, group, scene, landmark, sky1, sky2, earth, water, sun, mark }));
+
+const grid = document.querySelector("#state-grid");
+const template = document.querySelector("#state-template");
+const search = document.querySelector("#state-search");
+const filters = [...document.querySelectorAll(".filter")];
+const formatterCache = new Map();
+let activeFilter = "all";
+let selectedCard = null;
+
+function formatter(zone, options) {
+  const key = `${zone}-${JSON.stringify(options)}`;
+  if (!formatterCache.has(key)) formatterCache.set(key, new Intl.DateTimeFormat("en-US", { timeZone: zone, ...options }));
+  return formatterCache.get(key);
+}
+
+function displayTime(zone, date) {
+  return formatter(zone, { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(date);
+}
+
+function displayDate(zone, date) {
+  return formatter(zone, { weekday: "short", month: "short", day: "numeric" }).format(date);
+}
+
+function zoneName(zone, date) {
+  return formatter(zone, { timeZoneName: "short" }).formatToParts(date).find(part => part.type === "timeZoneName").value;
+}
+
+function buildCards() {
+  states.forEach(state => {
+    const fragment = template.content.cloneNode(true);
+    const card = fragment.querySelector(".state-card");
+    card.dataset.state = state.name.toLowerCase();
+    card.dataset.group = state.group;
+    card.dataset.scene = state.scene;
+    card.setAttribute("aria-label", `${state.name}: local time and India time`);
+    card.style.setProperty("--sky-1", state.sky1);
+    card.style.setProperty("--sky-2", state.sky2);
+    card.style.setProperty("--earth", state.earth);
+    card.style.setProperty("--water", state.water);
+    card.style.setProperty("--sun", state.sun);
+    card.querySelector(".state-abbr").textContent = state.abbr;
+    card.querySelector(".state-name").textContent = state.name;
+    card.querySelector(".terrain-label").textContent = state.scene;
+    card.querySelector(".landmark-label").textContent = state.landmark;
+    card.querySelector(".landmark-mark").textContent = state.mark;
+    card.dataset.zone = state.zone;
+    card.addEventListener("click", () => spotlight(card));
+    card.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); spotlight(card); } });
+    grid.appendChild(fragment);
+  });
+}
+
+function spotlight(card) {
+  if (selectedCard) selectedCard.classList.remove("is-selected");
+  selectedCard = card === selectedCard ? null : card;
+  selectedCard?.classList.add("is-selected");
+}
+
+function updateClocks() {
+  const now = new Date();
+  const indiaTime = displayTime("Asia/Kolkata", now);
+  const indiaDate = displayDate("Asia/Kolkata", now);
+  const indiaClock = document.querySelector("#india-time");
+  indiaClock.textContent = indiaTime;
+  indiaClock.dateTime = now.toISOString();
+  document.querySelector("#india-date").textContent = indiaDate;
+  document.querySelectorAll(".state-card").forEach(card => {
+    const zone = card.dataset.zone;
+    const stateTime = card.querySelector(".state-time");
+    stateTime.textContent = displayTime(zone, now);
+    stateTime.dateTime = now.toISOString();
+    card.querySelector(".zone-label").textContent = zoneName(zone, now);
+    card.querySelector(".paired-india-time").textContent = indiaTime;
+  });
+  document.querySelector("#last-update").textContent = `Updated ${formatter("Asia/Kolkata", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(now)} IST`;
+}
+
+function filterCards() {
+  const query = search.value.trim().toLowerCase();
+  let visible = 0;
+  document.querySelectorAll(".state-card").forEach(card => {
+    const matchQuery = card.dataset.state.includes(query) || card.querySelector(".state-abbr").textContent.toLowerCase().includes(query);
+    const matchZone = activeFilter === "all" || card.dataset.group === activeFilter;
+    const show = matchQuery && matchZone;
+    card.hidden = !show;
+    if (show) visible++;
+  });
+  document.querySelector("#state-count").textContent = visible;
+  document.querySelector("#empty-state").hidden = visible !== 0;
+}
+
+filters.forEach(button => button.addEventListener("click", () => {
+  activeFilter = button.dataset.filter;
+  filters.forEach(item => item.classList.toggle("active", item === button));
+  filterCards();
+}));
+search.addEventListener("input", filterCards);
+
+buildCards();
+updateClocks();
+setInterval(updateClocks, 1000);
+
+</script>
+  </body>
+</html>
+
